@@ -1,6 +1,6 @@
 package DataBase;
 
-/*public class Resident {
+public class Resident {
 	private int key;
 	private String firstName;
 	private String lastName;
