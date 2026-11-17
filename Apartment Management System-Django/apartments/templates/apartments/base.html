@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apartment Management</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; margin-bottom: 1.5rem; }
+    table { border-collapse: collapse; width: 100%; margin: 0.5rem 0 1.5rem; }
+    th, td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid #eee; }
+    th { background: #f6f6f6; }
+    .overdue { color: #b00020; font-weight: 600; }
+    .paid { color: #1b7f3b; }
+    .total { font-size: 1.15rem; font-weight: 600; }
+    form.filters { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+    button { padding: 0.35rem 0.9rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Apartment Management</h2>
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <span>{{ user.username }}</span>
+      <button type="submit">Log out</button>
+    </form>
+    {% endif %}
+  </header>
+  {% block content %}{% endblock %}
+</body>
+</html>

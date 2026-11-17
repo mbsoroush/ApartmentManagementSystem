@@ -1,0 +1,59 @@
+{% extends "apartments/base.html" %}
+{% block content %}
+<h1>Welcome, {{ user.get_full_name|default:user.username }}</h1>
+
+{% if not house %}
+  <p>No house is assigned to your account yet. Please contact the manager.</p>
+  {% if user.is_staff %}<p><a href="/admin/">Go to the manager admin</a></p>{% endif %}
+{% else %}
+  <p>House {{ house.number }} | floor {{ house.floor }} | {{ house.area }} m&sup2; | {{ house.rooms }} rooms | {{ house.get_status_display }}</p>
+
+  <h2>Debts</h2>
+  {% if debts %}
+    <p class="total">Total owed: {{ total_debt|floatformat:"0g" }} Toman</p>
+    <table>
+      <tr><th>Reason</th><th>Amount (Toman)</th><th>Due date</th><th></th></tr>
+      {% for p in debts %}
+      <tr>
+        <td>{{ p.get_reason_display }}</td>
+        <td>{{ p.amount|floatformat:"0g" }}</td>
+        <td>{{ p.due_date|date:"Y-m-d" }}</td>
+        <td>{% if p.is_overdue %}<span class="overdue">Overdue</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No debts. You are all paid up.</p>
+  {% endif %}
+
+  <h2>Payment history</h2>
+  <form method="get" class="filters">
+    <select name="reason">
+      <option value="">All reasons</option>
+      {% for value, label in reasons %}
+      <option value="{{ value }}" {% if value == reason %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <label>From <input type="date" name="date_from" value="{{ date_from }}"></label>
+    <label>To <input type="date" name="date_to" value="{{ date_to }}"></label>
+    <button type="submit">Filter</button>
+    <a href="{% url 'dashboard' %}">Reset</a>
+  </form>
+
+  {% if history %}
+  <table>
+    <tr><th>Reason</th><th>Amount (Toman)</th><th>Due date</th><th>Paid on</th></tr>
+    {% for p in history %}
+    <tr>
+      <td>{{ p.get_reason_display }}</td>
+      <td>{{ p.amount|floatformat:"0g" }}</td>
+      <td>{{ p.due_date|date:"Y-m-d" }}</td>
+      <td>{% if p.paid_date %}<span class="paid">{{ p.paid_date|date:"Y-m-d" }}</span>{% else %}<span class="overdue">Unpaid</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+    <p>No payments match these filters.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}
