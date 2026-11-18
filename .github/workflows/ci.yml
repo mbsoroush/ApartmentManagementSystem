@@ -58,5 +58,19 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - name: Build Docker image
-        run: docker build -t apartment-management-django .
+      - name: Start the stack with Docker Compose
+        run: docker compose up -d --build
+      - name: Wait for the app and check the login page
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8000/login/ > /dev/null; then
+              echo "App is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+      - name: Stop the stack
+        if: always()
+        run: docker compose down -v
