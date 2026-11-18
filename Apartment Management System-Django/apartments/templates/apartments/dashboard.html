@@ -36,7 +36,7 @@
   {% else %}
   <form method="post" action="{% url 'submit_request' %}" class="filters">
     {% csrf_token %}
-    <label>Request house status change to
+    <label>I want to
       <select name="requested_status">
         {% for value, label in status_choices %}
         <option value="{{ value }}">{{ label }}</option>

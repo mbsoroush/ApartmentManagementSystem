@@ -8,6 +8,14 @@ from django.views.decorators.http import require_POST
 from .models import House, Payment, Resident, StatusRequest
 
 
+# Which status changes a resident may request, per current house status.
+ALLOWED_CHANGES = {
+    "EMPTY": [("RENTED", "Rent this apartment"), ("OWNED", "Buy this apartment")],
+    "RENTED": [("OWNED", "Buy this apartment"), ("EMPTY", "Move out")],
+    "OWNED": [("RENTED", "Switch to renting"), ("EMPTY", "Move out")],
+}
+
+
 def _parse_date(value):
     try:
         return parse_date(value) if value else None
@@ -54,7 +62,7 @@ def dashboard(request):
             date_from=date_from,
             date_to=date_to,
             my_requests=resident.requests.all()[:10],
-            status_choices=[c for c in House.Status.choices if c[0] != house.status],
+            status_choices=ALLOWED_CHANGES.get(house.status, []),
             has_pending=resident.requests.filter(
                 status=StatusRequest.Status.PENDING).exists(),
         )
@@ -76,8 +84,8 @@ def submit_request(request):
 
     if requested not in House.Status.values:
         messages.error(request, "Please choose a valid status.")
-    elif requested == resident.house.status:
-        messages.error(request, "Your house already has that status.")
+    elif requested not in dict(ALLOWED_CHANGES.get(resident.house.status, [])):
+        messages.error(request, "That change is not available for your house.")
     elif resident.requests.filter(status=StatusRequest.Status.PENDING).exists():
         messages.error(request, "You already have a pending request.")
     else:
