@@ -1,0 +1,55 @@
+{% extends "apartments/base.html" %}
+{% block content %}
+<h1>Manager dashboard</h1>
+<p><a href="/admin/">Open full admin</a></p>
+
+{% if messages %}
+  {% for message in messages %}
+    <p class="paid">{{ message }}</p>
+  {% endfor %}
+{% endif %}
+
+<h2>Houses</h2>
+<table>
+  <tr><th>House</th><th>Floor</th><th>Status</th><th>Residents</th><th>Total debt (Toman)</th></tr>
+  {% for h in houses %}
+  <tr>
+    <td>{{ h.number }}</td>
+    <td>{{ h.floor }}</td>
+    <td>{{ h.get_status_display }}</td>
+    <td>{% for r in h.residents.all %}{{ r.user.get_full_name|default:r.user.username }}{% if not forloop.last %}, {% endif %}{% empty %}-{% endfor %}</td>
+    <td>{% if h.total_debt %}<span class="overdue">{{ h.total_debt|floatformat:"0g" }}</span>{% else %}0{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Unpaid payments</h2>
+{% if unpaid %}
+<table>
+  <tr><th>House</th><th>Reason</th><th>Amount (Toman)</th><th>Due date</th><th></th></tr>
+  {% for p in unpaid %}
+  <tr>
+    <td>{{ p.house.number }}</td>
+    <td>{{ p.get_reason_display }}</td>
+    <td>{{ p.amount|floatformat:"0g" }}</td>
+    <td>{{ p.due_date|date:"Y-m-d" }}{% if p.is_overdue %} <span class="overdue">Overdue</span>{% endif %}</td>
+    <td>
+      <form method="post" action="{% url 'mark_paid' p.pk %}">
+        {% csrf_token %}
+        <button type="submit">Mark paid</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>No unpaid payments.</p>
+{% endif %}
+
+<h2>Add a charge</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add charge</button>
+</form>
+{% endblock %}

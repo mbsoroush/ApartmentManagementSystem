@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils.dateparse import parse_date
 
 from .models import Payment, Resident
@@ -18,6 +18,8 @@ def dashboard(request):
     resident = (
         Resident.objects.filter(user=request.user).select_related("house").first()
     )
+    if request.user.is_staff and not resident:
+        return redirect("manager_dashboard")
     house = resident.house if resident else None
 
     context = {"house": house}
