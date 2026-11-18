@@ -2,6 +2,10 @@
 {% block content %}
 <h1>Welcome, {{ user.get_full_name|default:user.username }}</h1>
 
+{% for message in messages %}
+  <p class="{% if message.tags == 'error' %}overdue{% else %}paid{% endif %}">{{ message }}</p>
+{% endfor %}
+
 {% if not house %}
   <p>No house is assigned to your account yet. Please contact the manager.</p>
   {% if user.is_staff %}<p><a href="/admin/">Go to the manager admin</a></p>{% endif %}
@@ -24,6 +28,36 @@
     </table>
   {% else %}
     <p>No debts. You are all paid up.</p>
+  {% endif %}
+
+  <h2>Requests</h2>
+  {% if has_pending %}
+    <p>You have a request waiting for the manager's decision.</p>
+  {% else %}
+  <form method="post" action="{% url 'submit_request' %}" class="filters">
+    {% csrf_token %}
+    <label>Request house status change to
+      <select name="requested_status">
+        {% for value, label in status_choices %}
+        <option value="{{ value }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <input type="text" name="note" maxlength="300" placeholder="Note (optional)">
+    <button type="submit">Send request</button>
+  </form>
+  {% endif %}
+  {% if my_requests %}
+  <table>
+    <tr><th>Sent</th><th>Requested status</th><th>Decision</th></tr>
+    {% for r in my_requests %}
+    <tr>
+      <td>{{ r.created_at|date:"Y-m-d" }}</td>
+      <td>{{ r.get_requested_status_display }}</td>
+      <td>{{ r.get_status_display }}</td>
+    </tr>
+    {% endfor %}
+  </table>
   {% endif %}
 
   <h2>Payment history</h2>

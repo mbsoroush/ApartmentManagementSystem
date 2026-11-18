@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import Sum
 from django.utils import timezone
 
-from .models import House, Payment, Resident
+from .models import House, Payment, Resident, StatusRequest
 
 
 class PaymentInline(admin.TabularInline):
@@ -43,3 +43,9 @@ class PaymentAdmin(admin.ModelAdmin):
         updated = queryset.filter(paid_date__isnull=True).update(
             paid_date=timezone.localdate())
         self.message_user(request, f"{updated} payment(s) marked as paid.")
+
+
+@admin.register(StatusRequest)
+class StatusRequestAdmin(admin.ModelAdmin):
+    list_display = ("resident", "requested_status", "status", "created_at")
+    list_filter = ("status",)

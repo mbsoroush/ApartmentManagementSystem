@@ -23,6 +23,32 @@
   {% endfor %}
 </table>
 
+<h2>Pending requests</h2>
+{% if pending_requests %}
+<table>
+  <tr><th>Resident</th><th>House</th><th>Current status</th><th>Requested</th><th>Note</th><th></th></tr>
+  {% for r in pending_requests %}
+  <tr>
+    <td>{{ r.resident }}</td>
+    <td>{{ r.resident.house.number }}</td>
+    <td>{{ r.resident.house.get_status_display }}</td>
+    <td>{{ r.get_requested_status_display }}</td>
+    <td>{{ r.note }}</td>
+    <td>
+      <form method="post" action="{% url 'decide_request' r.pk 'approve' %}" style="display:inline">
+        {% csrf_token %}<button type="submit">Approve</button>
+      </form>
+      <form method="post" action="{% url 'decide_request' r.pk 'reject' %}" style="display:inline">
+        {% csrf_token %}<button type="submit">Reject</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>No pending requests.</p>
+{% endif %}
+
 <h2>Unpaid payments</h2>
 {% if unpaid %}
 <table>

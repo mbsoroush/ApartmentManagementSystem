@@ -1,9 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import redirect, render
 from django.utils.dateparse import parse_date
+from django.views.decorators.http import require_POST
 
-from .models import Payment, Resident
+from .models import House, Payment, Resident, StatusRequest
 
 
 def _parse_date(value):
@@ -51,5 +53,35 @@ def dashboard(request):
             reason=reason,
             date_from=date_from,
             date_to=date_to,
+            my_requests=resident.requests.all()[:10],
+            status_choices=[c for c in House.Status.choices if c[0] != house.status],
+            has_pending=resident.requests.filter(
+                status=StatusRequest.Status.PENDING).exists(),
         )
     return render(request, "apartments/dashboard.html", context)
+
+
+@login_required
+@require_POST
+def submit_request(request):
+    resident = (
+        Resident.objects.filter(user=request.user).select_related("house").first()
+    )
+    if not resident or not resident.house:
+        messages.error(request, "You have no house assigned.")
+        return redirect("dashboard")
+
+    requested = request.POST.get("requested_status", "")
+    note = request.POST.get("note", "").strip()[:300]
+
+    if requested not in House.Status.values:
+        messages.error(request, "Please choose a valid status.")
+    elif requested == resident.house.status:
+        messages.error(request, "Your house already has that status.")
+    elif resident.requests.filter(status=StatusRequest.Status.PENDING).exists():
+        messages.error(request, "You already have a pending request.")
+    else:
+        StatusRequest.objects.create(
+            resident=resident, requested_status=requested, note=note)
+        messages.success(request, "Your request was sent to the manager.")
+    return redirect("dashboard")

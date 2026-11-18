@@ -60,3 +60,26 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.get_reason_display()} {self.amount} for {self.house}"
+
+
+class StatusRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PENDING", "Pending"
+        APPROVED = "APPROVED", "Approved"
+        REJECTED = "REJECTED", "Rejected"
+
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE,
+                                 related_name="requests")
+    requested_status = models.CharField(max_length=10, choices=House.Status.choices)
+    note = models.CharField(max_length=300, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices,
+                              default=Status.PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    decided_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return (f"{self.resident}: {self.get_requested_status_display()} "
+                f"({self.get_status_display()})")
