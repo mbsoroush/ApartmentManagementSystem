@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/mbsoroush/ApartmentManagementSystem/actions/workflows/ci.yml/badge.svg)
 
-A web application for managing an apartment building, with separate interfaces for **residents** and **managers**. It's a rebuild of a university-era Java console project (2024) as a Django web app with a real database, automated tests and a containerised setup.
+A web application for managing an apartment building, with separate interfaces for **residents** and **managers**. It's a rebuild of a Java console project I wrote in 2024 as a Django web app with a real database, automated tests and a containerised setup.
 
 | Folder | What it is |
 |---|---|
