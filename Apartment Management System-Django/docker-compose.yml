@@ -23,6 +23,7 @@ services:
       POSTGRES_USER: apartments
       POSTGRES_PASSWORD: apartments
       POSTGRES_HOST: db
+      DJANGO_DEBUG: "1"
     volumes:
       - .:/app
     depends_on:

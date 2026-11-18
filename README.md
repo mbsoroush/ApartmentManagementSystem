@@ -80,3 +80,14 @@ The suite has 19 tests covering debt totals, overdue logic, filters, the request
 - Passwords are hashed by Django. The Java version compared plain text.
 - Managers have working features, the Java admin menu was empty.
 - Automated tests, CI and Docker are new.
+
+## Configuration
+Settings are read from environment variables, with defaults for local development:
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `DJANGO_SECRET_KEY` | built-in dev key | Required when `DJANGO_DEBUG=0` |
+| `DJANGO_DEBUG` | `1` | Set to `0` to turn debug mode off |
+| `DJANGO_ALLOWED_HOSTS` | `localhost,127.0.0.1` | Comma-separated host names |
+
+See `.env.example` in the Django folder.
