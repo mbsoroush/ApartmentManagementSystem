@@ -1,75 +1,82 @@
-# 🏢 Apartment Management System
+# Apartment Management System
 
-A Java-based application for managing apartment affairs, with separate access levels for administrators and residents. The project uses **SQLite** for data storage and applies object-oriented programming principles to organize the application.
+![CI](https://github.com/mbsoroush/ApartmentManagementSystem/actions/workflows/ci.yml/badge.svg)
 
-## 📌 Overview
+A web application for managing an apartment building, with separate interfaces for **residents** and **managers**. It's a rebuild of a university-era Java console project (2024) as a Django web app with a real database, automated tests and a containerised setup.
 
-The Apartment Management System is designed to simplify apartment administration by providing different functionalities for apartment managers and residents. It provides a structured way to manage apartment-related information through role-specific access.
-
-This project was developed to practice Java programming, object-oriented design, and database integration.
-
-## ✨ Features
-
-- **Role-Based Access:** Separate access levels for administrators and residents.
-- **Administrator Management:** Dedicated functionality for apartment managers.
-- **Resident Access:** Resident-specific functionality for accessing and managing relevant information.
-- **Database Integration:** SQLite database for persistent data storage.
-- **Object-Oriented Design:** Organized application structure using Java and object-oriented programming principles.
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
+| Folder | What it is |
 |---|---|
-| Java | Application development |
-| SQLite | Database management |
-| Object-Oriented Programming (OOP) | Application design and code organization |
+| [`Apartment Management System-Django`](Apartment%20Management%20System-Django) | The current version: Django, PostgreSQL, Docker, CI |
+| [`Apartment Management System-Java`](Apartment%20Management%20System-Java) | The original Java console project, kept unchanged |
 
-## 📂 Project Structure
+## Screenshots
 
-```text
-ApartmentManagementSystem/
-├── src/                       # Java source code
-├── out/                       # Compiled application output
-├── Project4002.iml            # IntelliJ IDEA project configuration
-└── README.md                  # Project documentation
+**Resident dashboard**
+
+![Resident dashboard](docs/screenshots/resident-dashboard.png)
+
+**Manager dashboard**
+
+![Manager dashboard](docs/screenshots/manager-dashboard.png)
+
+## Features
+
+**Residents**
+- Log in and see their house details
+- See debts (unpaid payments), the total owed, and which are overdue
+- Browse payment history, filtered by reason and date range
+- Request a change of house status (for example "Buy this apartment" or "Move out"), with one pending request at a time
+
+**Managers**
+- See every house with its residents and total debt
+- Add charges to a house, and mark payments as paid
+- Approve or reject resident requests (approving updates the house status)
+- Use Django's admin for everything else
+
+## Tech stack
+- Python 3.12, Django 6.1
+- PostgreSQL 16 (Docker) or SQLite (local development)
+- Docker and Docker Compose
+- GitHub Actions for CI: system check, migration check, tests on PostgreSQL, Docker Compose smoke test
+
+## Run it with Docker
+```bash
+cd "Apartment Management System-Django"
+docker compose up --build
+```
+In a second terminal, add the demo data:
+```bash
+docker compose exec web python manage.py seed_demo
+```
+Then open http://localhost:8000/.
+
+| Role | Username | Password |
+|---|---|---|
+| Resident | `resident1` | `resident12345` |
+| Manager | `manager` | `manager12345` |
+
+These are demo credentials for local use only. The Compose file runs Django's development server and is not a production setup.
+
+## Run it locally (SQLite)
+```bash
+cd "Apartment Management System-Django"
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py seed_demo
+python manage.py runserver
 ```
 
-## 🚀 Getting Started
+## Run the tests
+```bash
+python manage.py test
+```
+The suite has 19 tests covering debt totals, overdue logic, filters, the request rules and manager permissions.
 
-### Prerequisites
-
-- Java Development Kit (JDK)
-- An IDE that supports Java, such as IntelliJ IDEA
-- SQLite support for database operations
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/mbsoroush/ApartmentManagementSystem.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
-   cd ApartmentManagementSystem
-   ```
-
-3. Open the project in your preferred Java IDE.
-
-4. Configure the project JDK and ensure the SQLite database and any required dependencies are available.
-
-5. Locate the application's entry-point class in the `src/` directory and run it from your IDE.
-
-> **Note:** The exact database configuration and run instructions may depend on the existing source code and local environment.
-
-## 🎯 Learning Objectives
-
-This project demonstrates practical experience with:
-
-- Java application development
-- Object-oriented programming concepts
-- Relational database integration using SQLite
-- Designing software with different user roles
-- Structuring a software project for maintainability
+## What changed from the Java version
+- Data lives in a database. The Java version hardcoded it in `Main`.
+- Debts are computed from payments (a payment with no paid date is a debt). The Java version printed "No debts found!" for everyone.
+- Passwords are hashed by Django. The Java version compared plain text.
+- Managers have working features, the Java admin menu was empty.
+- Automated tests, CI and Docker are new.
