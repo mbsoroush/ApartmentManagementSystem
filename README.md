@@ -9,6 +9,18 @@ A web application for managing an apartment building, with separate interfaces f
 | [`Apartment Management System-Django`](Apartment%20Management%20System-Django) | The current version: Django, PostgreSQL, Docker, CI |
 | [`Apartment Management System-Java`](Apartment%20Management%20System-Java) | The original Java console project, kept unchanged |
 
+## Live demo
+**https://apartmentmanagementsystem-0f69f.containers.snapdeploy.app/**
+
+| Role | Username | Password |
+|---|---|---|
+| Resident | `resident1` | `resident12345` |
+| Manager | `manager` | `manager12345` |
+
+Notes:
+- It runs on a free hosting plan that sleeps after 15 minutes without visitors, so the first load can take about a minute.
+- The demo database is reset every time the container restarts, and these accounts are public, so please don't enter real data.
+
 ## Screenshots
 
 **Resident dashboard**
