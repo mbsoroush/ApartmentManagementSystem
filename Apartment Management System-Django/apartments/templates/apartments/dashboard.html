@@ -10,7 +10,7 @@
   <p>No house is assigned to your account yet. Please contact the manager.</p>
   {% if user.is_staff %}<p><a href="/admin/">Go to the manager admin</a></p>{% endif %}
 {% else %}
-  <p>House {{ house.number }} | floor {{ house.floor }} | {{ house.area }} m&sup2; | {{ house.rooms }} rooms | {{ house.get_status_display }}</p>
+  <p>House {{ house.number }} | floor {{ house.floor }} | {{ house.area }} m&sup2; | {{ house.rooms }} room{{ house.rooms|pluralize }} | {{ house.get_status_display }}</p>
 
   <h2>Debts</h2>
   {% if debts %}
