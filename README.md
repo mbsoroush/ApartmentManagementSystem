@@ -27,6 +27,10 @@ Notes:
 
 ![Resident dashboard](docs/screenshots/resident-dashboard.png)
 
+**Resident with a pending request**
+
+![Resident request](docs/screenshots/resident-request.png)
+
 **Manager dashboard**
 
 ![Manager dashboard](docs/screenshots/manager-dashboard.png)
