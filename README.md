@@ -1,4 +1,4 @@
-# 🏢 Apartment Management System
+# Apartment Management System
 
 ![CI](https://github.com/mbsoroush/ApartmentManagementSystem/actions/workflows/ci.yml/badge.svg)
 
